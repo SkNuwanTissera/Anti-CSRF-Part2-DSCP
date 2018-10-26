@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Controller
 public class UserController {
     @Autowired
@@ -31,7 +33,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model) {
+    public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model, HttpServletResponse response) {
         userValidator.validate(userForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -40,7 +42,7 @@ public class UserController {
 
         userService.save(userForm);
 
-        securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm());
+        securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm(),response);
 
         return "redirect:/welcome";
     }
